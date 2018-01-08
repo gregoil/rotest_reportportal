@@ -1,0 +1,3 @@
+dist/
+rotest_reportportal.egg-info/
+*.pyc

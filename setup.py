@@ -1,9 +1,9 @@
 """Setup file for handling packaging and distribution."""
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
-    name='rotest-reportportal',
+    name='rotest_reportportal',
     version="1.0.0",
     description="Rotest result handler to send data to a ReportPortal system",
     long_description=open("README.rst").read(),
@@ -16,9 +16,12 @@ setup(
                       'attrdict',
                       'pyyaml',
                       'reportportal_client'],
+    packages=find_packages("."),
+    package_dir={"": "."},
     entry_points={
         "rotest.result_handlers":
-            ["reportportal = reportportal_handler:ReportPortalHandler"]
+            ["reportportal = "
+             "rotest_reportportal.result_handler:ReportPortalHandler"]
     },
     zip_safe=False
 )

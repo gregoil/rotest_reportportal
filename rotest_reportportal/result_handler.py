@@ -99,7 +99,6 @@ class ReportPortalLogHandler(logging.Handler):
             if isinstance(record.msg, file):
                 logged_file = record.msg
                 message = self.format(record)
-                # message = "Attached {}".format(logged_file.name)
                 attachment = {
                     "name": os.path.basename(logged_file.name),
                     "data": logged_file.read(),
