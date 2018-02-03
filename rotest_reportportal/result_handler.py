@@ -71,16 +71,13 @@ class ReportPortalLogHandler(logging.Handler):
         log.addHandler(ReportPortalLogHandler(service=service))
         log.info("Regular message in here")
 
-        with open("screenshot.png", "rb") as screenshot:
-            log.warning(screenshot)
-
     Attributes:
-        service (ReportPortalServiceAsync): Endpoint for interracting with
+        service (ReportPortalServiceAsync): Endpoint for interacting with
             Report Portal.
     """
     FORMAT = "%(message)s"
 
-    LOGGING_LEVEL_CONVERTION = {
+    LOGGING_LEVEL_CONVERSION = {
         logging.DEBUG: "DEBUG",
         logging.INFO: "INFO",
         logging.WARNING: "WARN",
@@ -100,7 +97,7 @@ class ReportPortalLogHandler(logging.Handler):
             self.service.log(
                 time=timestamp(),
                 message=message,
-                level=self.LOGGING_LEVEL_CONVERTION[record.levelno])
+                level=self.LOGGING_LEVEL_CONVERSION[record.levelno])
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception:
