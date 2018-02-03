@@ -2,6 +2,9 @@
 rotest_reportportal
 ===================
 
+.. image:: https://travis-ci.org/gregoil/rotest_reportportal.svg?branch=master
+    :target: https://travis-ci.org/gregoil/rotest_reportportal
+
 What is it?
 ===========
 
