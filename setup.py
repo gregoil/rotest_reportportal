@@ -1,5 +1,5 @@
 """Setup file for handling packaging and distribution."""
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 setup(
@@ -16,8 +16,7 @@ setup(
                       'attrdict',
                       'pyyaml',
                       'reportportal_client'],
-    packages=find_packages("."),
-    package_dir={"": "."},
+    packages=["rotest_reportportal"],
     entry_points={
         "rotest.result_handlers":
             ["reportportal = "

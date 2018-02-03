@@ -3,7 +3,6 @@ import os
 import time
 import logging
 import traceback
-from mimetypes import guess_type
 
 import yaml
 from attrdict import AttrDict
@@ -96,24 +95,12 @@ class ReportPortalLogHandler(logging.Handler):
 
     def emit(self, record):
         try:
-            if isinstance(record.msg, file):
-                logged_file = record.msg
-                message = self.format(record)
-                attachment = {
-                    "name": os.path.basename(logged_file.name),
-                    "data": logged_file.read(),
-                    "mime": (guess_type(logged_file.name)[0] or
-                             "application/octet-stream")
-                }
-            else:
-                message = self.format(record)
-                attachment = None
+            message = self.format(record)
 
             self.service.log(
                 time=timestamp(),
                 message=message,
-                level=self.LOGGING_LEVEL_CONVERTION[record.levelno],
-                attachment=attachment)
+                level=self.LOGGING_LEVEL_CONVERTION[record.levelno])
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception:
@@ -139,9 +126,8 @@ class ReportPortalHandler(AbstractResultHandler):
                       MODE_FINALLY: "Finally"}
 
     def __init__(self, main_test, *args, **kwargs):
-        super(ReportPortalHandler, self).__init__(main_test=main_test)
-
-        self.log_handler = None
+        super(ReportPortalHandler, self).__init__(main_test=main_test,
+                                                  *args, **kwargs)
 
         configuration = get_configuration()
         self.service = ReportPortalServiceAsync(
