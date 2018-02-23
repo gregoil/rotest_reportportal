@@ -21,8 +21,8 @@ Install it using ``pip``:
 
     $ pip install rotest_reportportal
 
-Usage
-=====
+Configuration
+=============
 
 In the ``rotest.yml`` configuration file (or any of the available configuration
 formats, like ``.rotest.yaml``) add the following entry:
@@ -65,3 +65,12 @@ A couple of things about the UUID:
 
 * Unless you want everyone to be able to publish results for you, keep this
   UUID a secret (no mentioning in the repository's code or any public space).
+
+Usage
+=====
+
+You can run tests and activate the result handler, in the following way:
+
+.. code-block:: console
+
+    $ python <some_test_file> -o reportportal
