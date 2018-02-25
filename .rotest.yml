@@ -1,0 +1,3 @@
+rotest:
+    host: localhost
+    django_settings: rotest.common.django_utils.ut_settings
