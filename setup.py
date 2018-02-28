@@ -10,7 +10,7 @@ setup(
     license="MIT",
     author="gregoil",
     author_email="gregoil@walla.co.il",
-    url="https://github.com/gregoil/rotest-reportportal",
+    url="https://github.com/gregoil/rotest_reportportal",
     keywords="testing system reportportal unittest",
     install_requires=['rotest',
                       'attrdict',
