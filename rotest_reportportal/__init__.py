@@ -8,7 +8,6 @@ from attrdict import AttrDict
 from reportportal_client import ReportPortalServiceAsync
 from rotest.common import core_log
 from rotest.core.flow import TestFlow
-from rotest.core.block import TestBlock
 from rotest.common.config import search_config_file
 from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
@@ -155,8 +154,9 @@ class ReportPortalHandler(AbstractResultHandler):
         if isinstance(test, TestFlow):
             description = test.__doc__
 
-        if isinstance(test, TestBlock):
-            description = "|{}| {}".format(self.MODE_TO_STRING[test.mode],
+        mode = getattr(test, "mode")
+        if mode is not None:
+            description = "|{}| {}".format(self.MODE_TO_STRING[mode],
                                            description)
 
         self.service.start_test_item(
