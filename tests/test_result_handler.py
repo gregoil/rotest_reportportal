@@ -1,7 +1,4 @@
 import mock
-from rotest.core.case import TestCase
-from rotest.core.block import TestBlock
-from rotest.core.suite import TestSuite
 
 from rotest_reportportal import ReportPortalHandler
 
@@ -84,25 +81,20 @@ def test_finishing_run(_configuration_patch, service_patch, _time_patch):
     service_patch.return_value.terminate.assert_called_once_with()
 
 
-class Case(TestCase):
-    __test__ = False  # Not a test to be executed by pytest
-
-    TAGS = ["TAG1", "TAG2"]
-
-    def test_method(self):
-        """Case documentation."""
-        pass
-
-
 @mock.patch("rotest_reportportal.timestamp", return_value="123")
 @mock.patch("rotest_reportportal.ReportPortalServiceAsync")
 @mock.patch("rotest_reportportal.get_configuration")
-def test_starting_test_case(_configuration_patch, service_patch, _time_patch):
+def test_starting_case(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    test_case = Case(methodName="test_method", parent=main_test)
+
+    case = mock.MagicMock()
+    case.mode = None
+    case.shortDescription = mock.MagicMock(return_value="Case documentation.")
+    case.data.name = "Case.test_method"
+    case.TAGS = ["TAG1", "TAG2"]
 
     handler = ReportPortalHandler(main_test=main_test)
-    handler.start_test(test_case)
+    handler.start_test(case)
 
     service_patch.return_value.start_test_item.assert_called_once_with(
         name="Case.test_method",
@@ -113,20 +105,17 @@ def test_starting_test_case(_configuration_patch, service_patch, _time_patch):
     )
 
 
-class Block(TestBlock):
-    __test__ = False  # Not a test to be executed by pytest
-
-    def test_method(self):
-        """Block documentation."""
-        pass
-
-
 @mock.patch("rotest_reportportal.timestamp", return_value="123")
 @mock.patch("rotest_reportportal.ReportPortalServiceAsync")
 @mock.patch("rotest_reportportal.get_configuration")
 def test_starting_block(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock()
-    block = Block()
+
+    block = mock.MagicMock(mode=1)  # "critical" mode
+    block.shortDescription = \
+        mock.MagicMock(return_value="Block documentation.")
+    block.data.name = "Block.test_method"
+    block.TAGS = None
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.start_test(block)
@@ -146,17 +135,14 @@ def test_starting_block(_configuration_patch, service_patch, _time_patch):
 def test_starting_flow(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock()
 
-    # Defining in method level,
-    # so pytest won't try to run ``Flow`` and ``TestFlow``
-    from rotest.core.flow import TestFlow
-
-    class Flow(TestFlow):
-        """Flow documentation."""
-        TAGS = ["TAG1", "TAG2"]
-        blocks = (Block,)
+    flow = mock.MagicMock()
+    flow.mode = None
+    flow.shortDescription = mock.MagicMock(return_value="Flow documentation.")
+    flow.data.name = "Flow"
+    flow.TAGS = ["TAG1", "TAG2"]
 
     handler = ReportPortalHandler(main_test=main_test)
-    handler.start_test(Flow())
+    handler.start_test(flow)
 
     service_patch.return_value.start_test_item.assert_called_once_with(
         name="Flow",
@@ -167,19 +153,15 @@ def test_starting_flow(_configuration_patch, service_patch, _time_patch):
     )
 
 
-class Suite(TestSuite):
-    """Suite documentation."""
-    TAGS = ["TAG1", "TAG2"]
-
-    components = (Case,)
-
-
 @mock.patch("rotest_reportportal.timestamp", return_value="123")
 @mock.patch("rotest_reportportal.ReportPortalServiceAsync")
 @mock.patch("rotest_reportportal.get_configuration")
 def test_starting_suite(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock()
-    suite = Suite()
+
+    suite = mock.MagicMock(__doc__="Suite documentation.")
+    suite.data.name = "Suite"
+    suite.TAGS = ["TAG1", "TAG2"]
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.start_composite(suite)
@@ -224,8 +206,11 @@ def test_finishing_main_suite(_configuration_patch, service_patch,
 def test_finishing_successful_suite(_configuration_patch, service_patch,
                                     _time_patch):
     main_test = mock.Mock()
-    suite = Suite()
+
+    suite = mock.MagicMock(__doc__="Suite documentation.")
+    suite.data.name = "Suite"
     suite.data.success = True
+    suite.TAGS = ["TAG1", "TAG2"]
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.stop_composite(suite)
@@ -242,8 +227,11 @@ def test_finishing_successful_suite(_configuration_patch, service_patch,
 def test_finishing_failed_suite(_configuration_patch, service_patch,
                                 _time_patch):
     main_test = mock.Mock()
-    suite = Suite()
+
+    suite = mock.MagicMock(__doc__="Suite documentation.")
+    suite.data.name = "Suite"
     suite.data.success = False
+    suite.TAGS = ["TAG1", "TAG2"]
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.stop_composite(suite)
@@ -259,7 +247,7 @@ def test_finishing_failed_suite(_configuration_patch, service_patch,
 @mock.patch("rotest_reportportal.get_configuration")
 def test_successful_test(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = Case(methodName="test_method", parent=main_test)
+    case = mock.MagicMock()
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_success(case)
@@ -275,7 +263,7 @@ def test_successful_test(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_skipped_test(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = Case(methodName="test_method", parent=main_test)
+    case = mock.MagicMock()
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_skip(case, reason="Reason for skipping.")
@@ -293,7 +281,7 @@ def test_skipped_test(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_failed_test(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = Case(methodName="test_method", parent=main_test)
+    case = mock.MagicMock()
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_failure(case, exception_string="Exception message.")
@@ -311,7 +299,7 @@ def test_failed_test(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_error(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = Case(methodName="test_method", parent=main_test)
+    case = mock.MagicMock()
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_error(case, exception_string="Exception message.")
@@ -329,7 +317,7 @@ def test_error(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_expected_failure(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = Case(methodName="test_method", parent=main_test)
+    case = mock.MagicMock()
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_expected_failure(case, exception_string="Exception message.")
@@ -345,7 +333,7 @@ def test_expected_failure(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_unexpected_success(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = Case(methodName="test_method", parent=main_test)
+    case = mock.MagicMock()
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_unexpected_success(case)
