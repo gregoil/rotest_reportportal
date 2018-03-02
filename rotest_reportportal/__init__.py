@@ -1,6 +1,5 @@
 """Report Portal client to publish test results of the Rotest framework."""
 import os
-
 import time
 import logging
 
