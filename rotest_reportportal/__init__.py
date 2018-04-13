@@ -154,7 +154,7 @@ class ReportPortalHandler(AbstractResultHandler):
         if isinstance(test, TestFlow):
             description = test.__doc__
 
-        mode = getattr(test, "mode")
+        mode = getattr(test, "mode", None)
         if mode is not None:
             description = "|{}| {}".format(self.MODE_TO_STRING[mode],
                                            description)
