@@ -5,6 +5,10 @@ rotest_reportportal
 .. image:: https://travis-ci.org/gregoil/rotest_reportportal.svg?branch=master
     :target: https://travis-ci.org/gregoil/rotest_reportportal
 
+.. image:: https://img.shields.io/pypi/v/rotest-reportportal.svg
+    :alt: PyPI
+    :target: https://pypi.python.org/pypi/rotest-reportportal/
+
 What is it?
 ===========
 
