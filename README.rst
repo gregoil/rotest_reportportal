@@ -2,12 +2,15 @@
 rotest_reportportal
 ===================
 
-.. image:: https://travis-ci.org/gregoil/rotest_reportportal.svg?branch=master
-    :target: https://travis-ci.org/gregoil/rotest_reportportal
-
 .. image:: https://img.shields.io/pypi/v/rotest-reportportal.svg
     :alt: PyPI
     :target: https://pypi.python.org/pypi/rotest-reportportal/
+
+.. image:: https://travis-ci.org/gregoil/rotest_reportportal.svg?branch=master
+    :target: https://travis-ci.org/gregoil/rotest_reportportal
+
+.. image:: https://coveralls.io/repos/github/gregoil/rotest_reportportal/badge.svg?branch=master
+    :target: https://coveralls.io/github/gregoil/rotest_reportportal
 
 What is it?
 ===========
