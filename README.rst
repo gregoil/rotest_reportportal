@@ -9,6 +9,9 @@ rotest_reportportal
     :alt: PyPI
     :target: https://pypi.python.org/pypi/rotest-reportportal/
 
+.. image:: https://coveralls.io/repos/github/gregoil/rotest_reportportal/badge.svg?branch=master
+    :target: https://coveralls.io/github/gregoil/rotest_reportportal
+
 What is it?
 ===========
 
