@@ -119,7 +119,8 @@ def test_starting_block(_configuration_patch, service_patch, _time_patch):
     block = mock.MagicMock(spec=TestBlock,
                            data=mock.MagicMock(),
                            work_dir=mock.MagicMock(),
-                           mode=MODE_CRITICAL)
+                           mode=MODE_CRITICAL,
+                           TAGS=None)
     block.shortDescription = \
         mock.MagicMock(return_value="Block documentation.")
     block.data.name = "Block.test_method"
