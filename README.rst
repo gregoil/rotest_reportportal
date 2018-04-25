@@ -6,8 +6,8 @@ rotest_reportportal
     :alt: PyPI
     :target: https://pypi.python.org/pypi/rotest-reportportal/
 
-.. image:: https://travis-ci.org/gregoil/rotest_reportportal.svg?branch=master
-    :target: https://travis-ci.org/gregoil/rotest_reportportal
+.. image:: https://travis-ci.org/gregoil/rotest-reportportal.svg?branch=master
+    :target: https://travis-ci.org/gregoil/rotest-reportportal
 
 .. image:: https://img.shields.io/appveyor/ci/gregoil/rotest_reportportal.svg?branch=master
     :alt: AppVeyor
