@@ -9,6 +9,10 @@ rotest_reportportal
 .. image:: https://travis-ci.org/gregoil/rotest_reportportal.svg?branch=master
     :target: https://travis-ci.org/gregoil/rotest_reportportal
 
+.. image:: https://img.shields.io/appveyor/ci/gregoil/rotest_reportportal.svg?branch=master
+    :alt: AppVeyor
+    :target: https://ci.appveyor.com/project/gregoil/rotest_reportportal
+
 .. image:: https://coveralls.io/repos/github/gregoil/rotest_reportportal/badge.svg?branch=master
     :target: https://coveralls.io/github/gregoil/rotest_reportportal
 
