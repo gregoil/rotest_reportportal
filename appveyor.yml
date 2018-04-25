@@ -1,0 +1,11 @@
+environment:
+    matrix:
+        - PYTHON: "C:\\Python27"
+
+build: off
+
+install:
+    - "%PYTHON%\\python.exe -m pip install tox"
+
+test_script:
+    - "%PYTHON%\\Scripts\\tox.exe"
