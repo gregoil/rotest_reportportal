@@ -92,7 +92,7 @@ def test_starting_case(_configuration_patch, service_patch, _time_patch):
 
     case = mock.MagicMock(spec=TestCase,
                           data=mock.MagicMock(),
-                          work_dir=mock.MagicMock())
+                          work_dir=".")
 
     case.shortDescription = mock.MagicMock(return_value="Case documentation.")
     case.data.name = "Case.test_method"
@@ -118,8 +118,9 @@ def test_starting_block(_configuration_patch, service_patch, _time_patch):
 
     block = mock.MagicMock(spec=TestBlock,
                            data=mock.MagicMock(),
-                           work_dir=mock.MagicMock(),
-                           mode=MODE_CRITICAL)
+                           work_dir=".",
+                           mode=MODE_CRITICAL,
+                           TAGS=None)
     block.shortDescription = \
         mock.MagicMock(return_value="Block documentation.")
     block.data.name = "Block.test_method"
@@ -147,7 +148,7 @@ def test_starting_flow(_configuration_patch, service_patch, _time_patch):
 
     flow = mock.MagicMock(spec=TestFlow,
                           data=mock.MagicMock(),
-                          work_dir=mock.MagicMock(),
+                          work_dir=".",
                           __doc__="Flow documentation.")
     flow.mode = None
     flow.data.name = "Flow"

@@ -9,7 +9,6 @@ from reportportal_client import ReportPortalServiceAsync
 from rotest.common import core_log
 from rotest.core.flow import TestFlow
 from rotest.common.config import search_config_file
-from rotest.core.result.handlers.tags_handler import TagsHandler
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 from rotest.core.flow_component import (MODE_CRITICAL, MODE_OPTIONAL,
                                         MODE_FINALLY)
@@ -132,9 +131,7 @@ class ReportPortalHandler(AbstractResultHandler):
             run_name = self.main_test.__class__.__name__
             mode = "DEBUG"
 
-        description = TagsHandler.TAGS_PATTERN
-        if not description:
-            description = self.main_test.__doc__
+        description = self.main_test.__doc__
 
         self.service.start_launch(
             name=run_name,
