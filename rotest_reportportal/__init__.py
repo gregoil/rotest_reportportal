@@ -122,6 +122,11 @@ class ReportPortalHandler(AbstractResultHandler):
             token=configuration.token)
 
         self.log_handler = ReportPortalLogHandler(self.service)
+        self.successfully_exited = False
+
+    def __del__(self):
+        if not self.successfully_exited:
+            self.stop_test_run()
 
     def start_test_run(self):
         """Called once before any tests are executed."""
@@ -204,6 +209,7 @@ class ReportPortalHandler(AbstractResultHandler):
 
     def stop_test_run(self):
         """Called once after all tests are executed."""
+        self.successfully_exited = True
         self.service.finish_launch(end_time=timestamp())
         self.service.terminate()
 
