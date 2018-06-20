@@ -361,3 +361,34 @@ def test_unexpected_success(_configuration_patch, service_patch, _time_patch):
         end_time="123",
         status="FAILED"
     )
+
+
+@mock.patch("rotest_reportportal.timestamp", return_value="123")
+@mock.patch("rotest_reportportal.ReportPortalServiceAsync")
+@mock.patch("rotest_reportportal.get_configuration")
+def test_terminates_successfully_on_interrupt(_configuration_patch,
+                                              service_patch, _time_patch):
+    main_test = mock.Mock(spec=TestSuite)
+
+    handler = ReportPortalHandler(main_test=main_test)
+    handler.start_composite(main_test)
+
+    del handler
+    service_patch.return_value.terminate.assert_called()
+
+
+@mock.patch("rotest_reportportal.timestamp", return_value="123")
+@mock.patch("rotest_reportportal.ReportPortalServiceAsync")
+@mock.patch("rotest_reportportal.get_configuration")
+def test_terminates_successfully_without_interrupt(_configuration_patch,
+                                              service_patch, _time_patch):
+    main_test = mock.Mock(spec=TestSuite)
+
+    handler = ReportPortalHandler(main_test=main_test)
+    handler.start_composite(main_test)
+    handler.stop_test_run()
+    service_patch.return_value.terminate.assert_called()
+    service_patch.return_value.terminate.reset_mock()
+
+    del handler
+    service_patch.return_value.terminate.assert_not_called()
