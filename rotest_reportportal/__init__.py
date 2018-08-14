@@ -123,6 +123,7 @@ class ReportPortalHandler(AbstractResultHandler):
 
         self.log_handler = ReportPortalLogHandler(self.service)
         self.successfully_exited = False
+        self.depth_count = 0
 
     def __del__(self):
         if not self.successfully_exited:
@@ -174,6 +175,8 @@ class ReportPortalHandler(AbstractResultHandler):
             level="INFO",
             message="work dir:\n{0}".format(os.path.abspath(test.work_dir)))
 
+        self.depth_count += 1
+
     def start_composite(self, test):
         """Called when the given TestSuite is about to be run.
 
@@ -210,6 +213,21 @@ class ReportPortalHandler(AbstractResultHandler):
     def stop_test_run(self):
         """Called once after all tests are executed."""
         self.successfully_exited = True
+
+        if self.depth_count:
+            core_log.removeHandler(self.log_handler)
+
+            # If test was interrupted, close all hierarchies
+            # left open and finish the current launch
+            for _ in range(self.depth_count):
+                self.service.finish_test_item(end_time=timestamp(),
+                                              status="FAILED",
+                                              issue={
+                                                  "issue_type": "PRODUCT_BUG",
+                                                  "comment": "interrupted"
+                                              })
+
+            self.depth_count = 0
         self.service.finish_launch(end_time=timestamp())
         self.service.terminate()
 
@@ -218,6 +236,7 @@ class ReportPortalHandler(AbstractResultHandler):
         core_log.removeHandler(self.log_handler)
         self.service.finish_test_item(end_time=timestamp(),
                                       status="PASSED")
+        self.depth_count -= 1
 
     def add_skip(self, test, reason):
         """Called when a test is skipped."""
@@ -226,6 +245,7 @@ class ReportPortalHandler(AbstractResultHandler):
                                       status="SKIPPED",
                                       issue={"issue_type": "NO_DEFECT",
                                              "comment": reason})
+        self.depth_count -= 1
 
     def add_failure(self, test, exception_string):
         """Called when an error has occurred."""
@@ -235,6 +255,7 @@ class ReportPortalHandler(AbstractResultHandler):
                                       status="FAILED",
                                       issue={"issue_type": "PRODUCT_BUG",
                                              "comment": reason})
+        self.depth_count -= 1
 
     def add_error(self, test, exception_string):
         """Called when an error has occurred."""
@@ -244,12 +265,14 @@ class ReportPortalHandler(AbstractResultHandler):
                                       status="FAILED",
                                       issue={"issue_type": "AUTOMATION_BUG",
                                              "comment": reason})
+        self.depth_count -= 1
 
     def add_expected_failure(self, test, exception_string):
         """Called when an expected failure/error occurred."""
         core_log.removeHandler(self.log_handler)
         self.service.finish_test_item(end_time=timestamp(),
                                       status="PASSED")
+        self.depth_count -= 1
 
     def add_unexpected_success(self, test):
         """Called when a test was expected to fail, but succeed."""
@@ -261,3 +284,4 @@ class ReportPortalHandler(AbstractResultHandler):
 
         self.service.finish_test_item(end_time=timestamp(),
                                       status="FAILED")
+        self.depth_count -= 1
