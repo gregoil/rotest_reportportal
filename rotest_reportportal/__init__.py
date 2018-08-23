@@ -230,8 +230,9 @@ class ReportPortalHandler(AbstractResultHandler):
         if exception_type in self.EXCEPTION_TYPE_TO_ISSUE or \
                 not exception_type:
             issue = {
-                "issue_type": self.EXCEPTION_TYPE_TO_ISSUE.get(exception_type,
-                                                               "SYSTEM ISSUE"),
+                "issue_type":
+                    self.EXCEPTION_TYPE_TO_ISSUE.get(exception_type,
+                                                     "TO_INVESTIGATE"),
                 "comment": "\n".join(self.comments)
             }
 
