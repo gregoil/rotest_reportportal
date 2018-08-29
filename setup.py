@@ -16,6 +16,11 @@ setup(
                       'attrdict',
                       'pyyaml',
                       'reportportal_client'],
+    extras_require={
+        "dev": ["flake8", "pylint",
+                "pytest", "pytest-cov",
+                "mock"]
+    },
     packages=["rotest_reportportal"],
     entry_points={
         "rotest.result_handlers":
