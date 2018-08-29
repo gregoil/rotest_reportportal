@@ -9,10 +9,10 @@ from rotest.common import core_log
 from rotest.core.flow import TestFlow
 from rotest.core.result.result import TestOutcome
 from rotest.common.config import search_config_file
-from reportportal_client import ReportPortalServiceAsync
 from rotest.core.result.handlers.abstract_handler import AbstractResultHandler
 from rotest.core.flow_component import (MODE_CRITICAL, MODE_OPTIONAL,
                                         MODE_FINALLY)
+from reportportal_client import ReportPortalServiceAsync
 
 REPORTPORTAL_TOKEN = "ROTEST_REPORTPORTAL_TOKEN"
 
@@ -228,7 +228,7 @@ class ReportPortalHandler(AbstractResultHandler):
 
         issue = None
         if exception_type in self.EXCEPTION_TYPE_TO_ISSUE or \
-                not exception_type:
+                exception_type is None or exception_type == "":
             issue = {
                 "issue_type":
                     self.EXCEPTION_TYPE_TO_ISSUE.get(exception_type,
