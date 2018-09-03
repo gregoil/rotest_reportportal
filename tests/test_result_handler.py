@@ -1,6 +1,7 @@
 import mock
 from rotest.core.case import TestCase
 from rotest.core.suite import TestSuite
+from rotest.core.models.case_data import TestOutcome
 from rotest.core.block import TestBlock, MODE_CRITICAL
 
 from rotest_reportportal import ReportPortalHandler
@@ -266,14 +267,18 @@ def test_finishing_failed_suite(_configuration_patch, service_patch,
 @mock.patch("rotest_reportportal.get_configuration")
 def test_successful_test(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = mock.MagicMock(spec=TestCase)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=TestOutcome.SUCCESS))
 
     handler = ReportPortalHandler(main_test=main_test)
-    handler.add_success(case)
+    handler.stop_test(case)
 
     service_patch.return_value.finish_test_item.assert_called_once_with(
         end_time="123",
-        status="PASSED"
+        status="PASSED",
+        issue=None
     )
 
 
@@ -282,10 +287,14 @@ def test_successful_test(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_skipped_test(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = mock.MagicMock(spec=TestCase)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=TestOutcome.SKIPPED))
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_skip(case, reason="Reason for skipping.")
+    handler.stop_test(case)
 
     service_patch.return_value.finish_test_item.assert_called_once_with(
         end_time="123",
@@ -300,10 +309,14 @@ def test_skipped_test(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_failed_test(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = mock.MagicMock(spec=TestCase)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=TestOutcome.FAILED))
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_failure(case, exception_string="Exception message.")
+    handler.stop_test(case)
 
     service_patch.return_value.finish_test_item.assert_called_once_with(
         end_time="123",
@@ -318,10 +331,14 @@ def test_failed_test(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_error(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = mock.MagicMock(spec=TestCase)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=TestOutcome.ERROR))
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_error(case, exception_string="Exception message.")
+    handler.stop_test(case)
 
     service_patch.return_value.finish_test_item.assert_called_once_with(
         end_time="123",
@@ -336,14 +353,19 @@ def test_error(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_expected_failure(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = mock.MagicMock(spec=TestCase)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=TestOutcome.EXPECTED_FAILURE))
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_expected_failure(case, exception_string="Exception message.")
+    handler.stop_test(case)
 
     service_patch.return_value.finish_test_item.assert_called_once_with(
         end_time="123",
-        status="PASSED"
+        status="PASSED",
+        issue=None
     )
 
 
@@ -352,14 +374,19 @@ def test_expected_failure(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_unexpected_success(_configuration_patch, service_patch, _time_patch):
     main_test = mock.Mock(parents_count=0)
-    case = mock.MagicMock(spec=TestCase)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=TestOutcome.UNEXPECTED_SUCCESS))
 
     handler = ReportPortalHandler(main_test=main_test)
     handler.add_unexpected_success(case)
+    handler.stop_test(case)
 
     service_patch.return_value.finish_test_item.assert_called_once_with(
         end_time="123",
-        status="FAILED"
+        status="FAILED",
+        issue=None
     )
 
 
@@ -368,20 +395,27 @@ def test_unexpected_success(_configuration_patch, service_patch, _time_patch):
 @mock.patch("rotest_reportportal.get_configuration")
 def test_terminates_successfully_on_interrupt(_configuration_patch,
                                               service_patch, _time_patch):
-    main_test = mock.Mock(spec=TestSuite)
+    main_test = mock.Mock(parents_count=0)
+
+    case = mock.MagicMock(
+        spec=TestCase,
+        data=mock.MagicMock(exception_type=None))
 
     handler = ReportPortalHandler(main_test=main_test)
-    handler.start_composite(main_test)
-
-    del handler
-    service_patch.return_value.terminate.assert_called()
+    handler.stop_test(case)
+    service_patch.return_value.finish_test_item.assert_called_once_with(
+        end_time="123",
+        status="FAILED",
+        issue={"issue_type": "TO_INVESTIGATE",
+               "comment": ""}
+    )
 
 
 @mock.patch("rotest_reportportal.timestamp", return_value="123")
 @mock.patch("rotest_reportportal.ReportPortalServiceAsync")
 @mock.patch("rotest_reportportal.get_configuration")
 def test_terminates_successfully_without_interrupt(_configuration_patch,
-                                              service_patch, _time_patch):
+                                                   service_patch, _time_patch):
     main_test = mock.Mock(spec=TestSuite)
 
     handler = ReportPortalHandler(main_test=main_test)
@@ -389,6 +423,3 @@ def test_terminates_successfully_without_interrupt(_configuration_patch,
     handler.stop_test_run()
     service_patch.return_value.terminate.assert_called()
     service_patch.return_value.terminate.reset_mock()
-
-    del handler
-    service_patch.return_value.terminate.assert_not_called()

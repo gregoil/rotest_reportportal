@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='rotest_reportportal',
-    version="1.1.3",
+    version="1.1.4",
     description="Rotest result handler to send data to a ReportPortal system",
     long_description=open("README.rst").read(),
     license="MIT",
@@ -16,6 +16,11 @@ setup(
                       'attrdict',
                       'pyyaml',
                       'reportportal_client'],
+    extras_require={
+        "dev": ["flake8", "pylint",
+                "pytest", "pytest-cov",
+                "mock"]
+    },
     packages=["rotest_reportportal"],
     entry_points={
         "rotest.result_handlers":
