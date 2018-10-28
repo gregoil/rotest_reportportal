@@ -1,16 +1,32 @@
 language: python
+stages:
+- test
+- name: deploy
+  if: tag IS present
 python:
 - '2.7'
-
+- '3.5'
+- '3.6'
 install: pip install tox coveralls
-script: tox
+script: tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d .)
 after_success: coveralls
-
-deploy:
-  provider: pypi
-  on:
-    tags: true
-  distributions: sdist bdist_wheel
-  user: gregoil
-  password:
-    secure: uK0Lu4oZo7z1FWf6i22J66SvnOpbfWJnSxyStJjvjZcHhq9I82BPPkaDMNPyaobmF+om07JrZDXAJ07togqI4FikHqwwW2OD/MtOsb0/bEmtRhe9Fx7tiIOJ6dd80bKQ+a4WUxKJcwY6n7vDvzOEGHAYw9lCmTVw8fvgv+SYOZ5wqeQ6Y3ULieFK+ZgNRj563XFrDdms16C2Byip6f+9Nwgq7K72GGqoPCuUs82y3PDmljvMjhT2BLFMPoz7uiQyUPvR0c3FL8JnZULLYh+MIbbGbW+A33T8pWiInxcCVJLjVj9ObIag+sfR3lVB/tTX3YEOrtG8h0euQqJosUfTEt4k8IpA0NeQEdkM9Z/5AAekH+yObJu3xu2cEmwSGzZLSM5RVVXLnIVSzDOHBmF+kgtPGW7Rxg8ifqfx/V5Wa/vlIKtUzrnwZOtOhHxtcVqunV7K6MgG69QEZP+MYJ0PWjk4Gu3yH54ylgwXwJSODc1cxEE6ZB7Z0QI1whGmR9DOLQsDJuWwYWBY3AysyJAVRqqZ5Azl2oj1lGX4Nfu2SV6nWPedEmh1lzKdq9Y7hTAhBoBqwMbgk6RW0v7mBBd2VGa16sZ6VxvcuVkj9kuYuTnP9CN/N6tZb6yaNlMdzaB/d8maOZGAj+WNKasgN8wNj+Ys1ZdLcsQYEFajjgJWGHw=
+jobs:
+  include:
+  - name: docs
+    stage: test
+    python: '3.6'
+    install: pip install tox
+    script: tox -e docs
+  - stage: deploy
+    python: '3.6'
+    install: skip
+    script: skip
+    deploy:
+      stage: deploy
+      provider: pypi
+      on:
+        tags: true
+      distributions: sdist bdist_wheel
+      user: gregoil
+      password:
+        secure: uK0Lu4oZo7z1FWf6i22J66SvnOpbfWJnSxyStJjvjZcHhq9I82BPPkaDMNPyaobmF+om07JrZDXAJ07togqI4FikHqwwW2OD/MtOsb0/bEmtRhe9Fx7tiIOJ6dd80bKQ+a4WUxKJcwY6n7vDvzOEGHAYw9lCmTVw8fvgv+SYOZ5wqeQ6Y3ULieFK+ZgNRj563XFrDdms16C2Byip6f+9Nwgq7K72GGqoPCuUs82y3PDmljvMjhT2BLFMPoz7uiQyUPvR0c3FL8JnZULLYh+MIbbGbW+A33T8pWiInxcCVJLjVj9ObIag+sfR3lVB/tTX3YEOrtG8h0euQqJosUfTEt4k8IpA0NeQEdkM9Z/5AAekH+yObJu3xu2cEmwSGzZLSM5RVVXLnIVSzDOHBmF+kgtPGW7Rxg8ifqfx/V5Wa/vlIKtUzrnwZOtOhHxtcVqunV7K6MgG69QEZP+MYJ0PWjk4Gu3yH54ylgwXwJSODc1cxEE6ZB7Z0QI1whGmR9DOLQsDJuWwYWBY3AysyJAVRqqZ5Azl2oj1lGX4Nfu2SV6nWPedEmh1lzKdq9Y7hTAhBoBqwMbgk6RW0v7mBBd2VGa16sZ6VxvcuVkj9kuYuTnP9CN/N6tZb6yaNlMdzaB/d8maOZGAj+WNKasgN8wNj+Ys1ZdLcsQYEFajjgJWGHw=
