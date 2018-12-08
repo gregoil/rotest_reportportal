@@ -89,9 +89,6 @@ class ReportPortalLogHandler(logging.Handler):
                 message=message,
                 level=self.LOGGING_LEVEL_CONVERSION[record.levelno])
 
-        # pylint: disable=try-except-raise
-        except (KeyboardInterrupt, SystemExit):
-            raise
         except Exception:
             self.handleError(record)
             raise
