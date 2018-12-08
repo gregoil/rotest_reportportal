@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='rotest_reportportal',
-    version="1.1.4",
+    version="2.0.0",
     description="Rotest result handler to send data to a ReportPortal system",
     long_description=open("README.rst").read(),
     license="MIT",
