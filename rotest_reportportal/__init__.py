@@ -88,8 +88,7 @@ class ReportPortalLogHandler(logging.Handler):
                 time=timestamp(),
                 message=message,
                 level=self.LOGGING_LEVEL_CONVERSION[record.levelno])
-        except (KeyboardInterrupt, SystemExit):
-            raise
+
         except Exception:
             self.handleError(record)
             raise
@@ -100,7 +99,7 @@ class ReportPortalHandler(AbstractResultHandler):
 
     Attributes:
         main_test (object): the main test instance to be run.
-        service (ReportPortalServiceAsync): Endpoint for interracting with
+        service (ReportPortalServiceAsync): Endpoint for interacting with
             Report Portal.
         log_handler (ReportPortalLogHandler): A log handler to send every log
             message to the Report Portal system. Logs can be sent only when
